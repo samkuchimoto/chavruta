@@ -1,0 +1,483 @@
+/**
+ * app/globals.css
+ *
+ * Chavruta design system — Tailwind v4 CSS-first configuration.
+ * All theme tokens defined here via @theme become Tailwind utility classes.
+ *
+ * Fonts are loaded via next/font in app/layout.tsx, which sets:
+ *   --font-inter        (CSS variable on <html>)
+ *   --font-crimson-pro  (CSS variable on <html>)
+ * Those variables are consumed in @theme below.
+ *
+ * Palette:
+ *   Background  #09090B  — near-black, quiet room at night
+ *   Foreground  #F4F4F5  — warm near-white
+ *   Accent      #A8916A  — manuscript gold (used sparingly)
+ *   Surface     #18181B  — elevated card/input background
+ *   Border      #27272A  — subtle dividers
+ *   Muted       #71717A  — secondary / helper text
+ *   Destructive #EF4444  — error states only
+ *
+ * Typography rule:
+ *   font-serif  → Crimson Pro — timer numerals and source text passages only
+ *   font-sans   → Inter — all UI, labels, messages, everything else
+ */
+
+@import "tailwindcss";
+
+/* ── Theme tokens ──────────────────────────────────────────────────────────── */
+
+@theme {
+
+  /* Colors */
+  --color-background:     #09090B;
+  --color-foreground:     #F4F4F5;
+
+  --color-surface:        #18181B;
+  --color-surface-raised: #1C1C1F;
+
+  --color-border:         #27272A;
+  --color-border-subtle:  #1F1F22;
+
+  --color-muted:          #71717A;
+  --color-muted-foreground: #A1A1AA;
+
+  --color-accent:         #A8916A;
+  --color-accent-dim:     #7A6B4F;
+  --color-accent-glow:    rgba(168, 145, 106, 0.12);
+
+  --color-destructive:    #EF4444;
+  --color-destructive-dim: #7F1D1D;
+
+  /* Semantic aliases — use these in component classes */
+  --color-input-bg:       var(--color-surface);
+  --color-input-border:   var(--color-border);
+  --color-input-focus:    var(--color-accent);
+
+  /* Typography */
+  --font-sans:  var(--font-inter, ui-sans-serif), system-ui, sans-serif;
+  --font-serif: var(--font-crimson-pro, ui-serif), Georgia, serif;
+
+  /* Font sizes */
+  --text-xs:   0.75rem;    /* 12px */
+  --text-sm:   0.875rem;   /* 14px */
+  --text-base: 1rem;       /* 16px */
+  --text-lg:   1.125rem;   /* 18px */
+  --text-xl:   1.25rem;    /* 20px */
+  --text-2xl:  1.5rem;     /* 24px */
+  --text-3xl:  1.875rem;   /* 30px */
+
+  /* Timer — the signature element. Serif, large, unhurried. */
+  --text-timer:               4.5rem;   /* 72px */
+  --text-timer--line-height:  1;
+  --text-timer--letter-spacing: -0.02em;
+
+  /* Line heights */
+  --leading-tight:  1.25;
+  --leading-snug:   1.375;
+  --leading-normal: 1.5;
+  --leading-relaxed: 1.625;
+  --leading-loose:  1.75;
+
+  /* Spacing scale (extends Tailwind defaults) */
+  --spacing-18: 4.5rem;
+  --spacing-22: 5.5rem;
+
+  /* Border radius */
+  --radius-sm:  0.25rem;
+  --radius:     0.375rem;
+  --radius-md:  0.5rem;
+  --radius-lg:  0.75rem;
+
+  /* Transitions */
+  --ease-out-smooth: cubic-bezier(0.16, 1, 0.3, 1);
+  --duration-fast:   150ms;
+  --duration-base:   200ms;
+  --duration-slow:   350ms;
+
+  /* Max widths */
+  --width-prose:    680px;   /* reading column */
+  --width-session:  760px;   /* session thread (slightly wider) */
+  --width-narrow:   480px;   /* forms, auth pages */
+}
+
+/* ── Base layer ────────────────────────────────────────────────────────────── */
+
+@layer base {
+
+  *, *::before, *::after {
+    box-sizing: border-box;
+    border-color: var(--color-border);
+  }
+
+  html {
+    font-size: 16px;
+    -webkit-text-size-adjust: 100%;
+    text-size-adjust: 100%;
+  }
+
+  body {
+    background-color: var(--color-background);
+    color:            var(--color-foreground);
+    font-family:      var(--font-sans);
+    font-size:        var(--text-base);
+    line-height:      var(--leading-normal);
+    -webkit-font-smoothing:  antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    min-height: 100dvh;
+  }
+
+  /* Focus ring — accessible, on-brand */
+  :focus-visible {
+    outline:        2px solid var(--color-accent);
+    outline-offset: 2px;
+  }
+
+  /* Remove default focus ring for mouse users */
+  :focus:not(:focus-visible) {
+    outline: none;
+  }
+
+  /* Headings — weight stays normal; hierarchy via size and spacing */
+  h1, h2, h3, h4, h5, h6 {
+    font-weight: 400;
+    line-height: var(--leading-tight);
+    color:       var(--color-foreground);
+    margin:      0;
+  }
+
+  p {
+    margin: 0;
+  }
+
+  a {
+    color: inherit;
+    text-decoration: none;
+  }
+
+  a:hover {
+    color: var(--color-accent);
+  }
+
+  input, textarea, select, button {
+    font-family: inherit;
+    font-size:   inherit;
+  }
+
+  /* Subtle scrollbar — session thread, message lists */
+  ::-webkit-scrollbar {
+    width: 4px;
+    height: 4px;
+  }
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  ::-webkit-scrollbar-thumb {
+    background:    var(--color-border);
+    border-radius: 2px;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: var(--color-muted);
+  }
+}
+
+/* ── Component classes ─────────────────────────────────────────────────────── */
+
+@layer components {
+
+  /* ── Layout shells ── */
+
+  .page-shell {
+    min-height:     100dvh;
+    display:        flex;
+    flex-direction: column;
+    align-items:    center;
+    padding:        2rem 1.5rem;
+  }
+
+  .prose-shell {
+    width:     100%;
+    max-width: var(--width-prose);
+    margin:    0 auto;
+  }
+
+  .session-shell {
+    width:     100%;
+    max-width: var(--width-session);
+    margin:    0 auto;
+  }
+
+  .narrow-shell {
+    width:     100%;
+    max-width: var(--width-narrow);
+    margin:    0 auto;
+  }
+
+  /* ── Timer — the signature element ── */
+
+  .timer-display {
+    font-family:     var(--font-serif);
+    font-size:       var(--text-timer);
+    line-height:     1;
+    letter-spacing:  -0.02em;
+    color:           var(--color-muted);
+    font-weight:     400;
+    font-variant-numeric: tabular-nums;
+    transition:      color var(--duration-slow) ease;
+    user-select:     none;
+  }
+
+  /* Last 5 minutes — accent color signals time running out without alarm */
+  .timer-display.timer-urgent {
+    color: var(--color-accent);
+  }
+
+  /* Expired */
+  .timer-display.timer-done {
+    color: var(--color-muted);
+    opacity: 0.4;
+  }
+
+  /* ── Source text display ── */
+
+  .source-text-body {
+    font-family:  var(--font-serif);
+    font-size:    var(--text-xl);
+    line-height:  var(--leading-loose);
+    color:        var(--color-muted-foreground);
+    font-style:   italic;
+    max-width:    var(--width-prose);
+  }
+
+  .source-text-title {
+    font-size:      var(--text-sm);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color:          var(--color-accent);
+    font-family:    var(--font-sans);
+    font-weight:    400;
+  }
+
+  /* ── Card / surface ── */
+
+  .card {
+    background-color: var(--color-surface);
+    border:           1px solid var(--color-border);
+    border-radius:    var(--radius-md);
+    padding:          1.5rem;
+  }
+
+  .card-raised {
+    background-color: var(--color-surface-raised);
+    border:           1px solid var(--color-border);
+    border-radius:    var(--radius-md);
+    padding:          1.5rem;
+  }
+
+  /* ── Form elements ── */
+
+  .input {
+    width:            100%;
+    background-color: var(--color-input-bg);
+    border:           1px solid var(--color-input-border);
+    border-radius:    var(--radius);
+    padding:          0.625rem 0.875rem;
+    color:            var(--color-foreground);
+    font-size:        var(--text-sm);
+    line-height:      var(--leading-normal);
+    transition:       border-color var(--duration-fast) ease;
+    resize:           none;
+  }
+
+  .input::placeholder {
+    color: var(--color-muted);
+  }
+
+  .input:focus {
+    outline:       none;
+    border-color:  var(--color-input-focus);
+  }
+
+  .textarea {
+    composes: input;
+    min-height: 120px;
+    resize:     vertical;
+  }
+
+  .label {
+    display:      block;
+    font-size:    var(--text-xs);
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color:        var(--color-muted);
+    margin-bottom: 0.5rem;
+  }
+
+  /* ── Buttons ── */
+
+  .btn {
+    display:         inline-flex;
+    align-items:     center;
+    justify-content: center;
+    gap:             0.5rem;
+    padding:         0.625rem 1.25rem;
+    border-radius:   var(--radius);
+    font-size:       var(--text-sm);
+    font-weight:     400;
+    letter-spacing:  0.02em;
+    cursor:          pointer;
+    transition:      all var(--duration-fast) ease;
+    border:          1px solid transparent;
+    white-space:     nowrap;
+    text-decoration: none;
+  }
+
+  .btn:disabled {
+    opacity: 0.4;
+    cursor:  not-allowed;
+  }
+
+  .btn-primary {
+    background-color: var(--color-foreground);
+    color:            var(--color-background);
+    border-color:     var(--color-foreground);
+  }
+
+  .btn-primary:hover:not(:disabled) {
+    background-color: var(--color-accent);
+    border-color:     var(--color-accent);
+    color:            var(--color-background);
+  }
+
+  .btn-ghost {
+    background-color: transparent;
+    color:            var(--color-muted);
+    border-color:     transparent;
+  }
+
+  .btn-ghost:hover:not(:disabled) {
+    color:            var(--color-foreground);
+    background-color: var(--color-surface);
+  }
+
+  .btn-outline {
+    background-color: transparent;
+    color:            var(--color-foreground);
+    border-color:     var(--color-border);
+  }
+
+  .btn-outline:hover:not(:disabled) {
+    border-color: var(--color-accent);
+    color:        var(--color-accent);
+  }
+
+  .btn-destructive {
+    background-color: transparent;
+    color:            var(--color-destructive);
+    border-color:     var(--color-destructive-dim);
+  }
+
+  .btn-destructive:hover:not(:disabled) {
+    background-color: var(--color-destructive-dim);
+  }
+
+  /* ── Message bubbles ── */
+
+  .message-bubble {
+    max-width:        75%;
+    padding:          0.625rem 0.875rem;
+    border-radius:    var(--radius-md);
+    font-size:        var(--text-sm);
+    line-height:      var(--leading-relaxed);
+    word-break:       break-word;
+  }
+
+  .message-bubble-own {
+    background-color: var(--color-surface-raised);
+    color:            var(--color-foreground);
+    margin-left:      auto;
+    border-bottom-right-radius: var(--radius-sm);
+  }
+
+  .message-bubble-partner {
+    background-color: var(--color-surface);
+    color:            var(--color-muted-foreground);
+    margin-right:     auto;
+    border-bottom-left-radius: var(--radius-sm);
+  }
+
+  /* ── Divider ── */
+
+  .divider {
+    border:     none;
+    border-top: 1px solid var(--color-border-subtle);
+    margin:     0;
+  }
+
+  /* ── Inline wordmark ── */
+
+  .wordmark {
+    font-size:      0.8125rem;   /* 13px */
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color:          var(--color-accent);
+    font-family:    var(--font-sans);
+    font-weight:    400;
+  }
+
+  /* ── Status badges ── */
+
+  .badge {
+    display:        inline-flex;
+    align-items:    center;
+    padding:        0.125rem 0.5rem;
+    border-radius:  var(--radius-sm);
+    font-size:      var(--text-xs);
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    font-weight:    400;
+  }
+
+  .badge-active   { background-color: rgba(168,145,106,0.12); color: var(--color-accent); }
+  .badge-pending  { background-color: var(--color-surface);   color: var(--color-muted);  }
+  .badge-done     { background-color: var(--color-surface);   color: var(--color-muted);  }
+  .badge-error    { background-color: rgba(239,68,68,0.10);   color: var(--color-destructive); }
+}
+
+/* ── Utilities ─────────────────────────────────────────────────────────────── */
+
+@layer utilities {
+
+  .text-balance {
+    text-wrap: balance;
+  }
+
+  .text-pretty {
+    text-wrap: pretty;
+  }
+
+  /* Fluid top padding — breathes on large screens */
+  .pt-fluid {
+    padding-top: clamp(2rem, 5vw, 5rem);
+  }
+
+  /* Fade-in for page mounts */
+  .animate-fade-in {
+    animation: fadeIn var(--duration-slow) var(--ease-out-smooth) both;
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(6px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  /* Pulse for the timer in the last 2 minutes */
+  .animate-pulse-subtle {
+    animation: pulseSlight 2s ease-in-out infinite;
+  }
+
+  @keyframes pulseSlight {
+    0%, 100% { opacity: 1; }
+    50%       { opacity: 0.65; }
+  }
+}
