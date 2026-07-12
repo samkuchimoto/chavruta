@@ -16,6 +16,21 @@
  *
  * Nothing in this file does I/O and nothing in it throws. It is safe to
  * import from anywhere, including Edge middleware, without side effects.
+ *
+ * ── Why `supabase` is computed differently from everything else below ──────
+ * Next.js only inlines NEXT_PUBLIC_ vars into the browser bundle when the
+ * full expression `process.env.NEXT_PUBLIC_X` appears literally in the
+ * source. Dynamic access — `process.env[someVariable]` — is NOT inlined
+ * (this is documented Next.js behavior, not a bug in their bundler). The
+ * `has()` helper below builds its key from a variable, so any flag that
+ * depends on it will silently evaluate to `false` in browser code, no
+ * matter what's actually set in Vercel.
+ * `supabase` is the one flag read from a Client Component
+ * (createBrowserSupabaseClient, called from the signup/login pages), so it
+ * must use static literal reads instead. Everything else here (groq, nomic,
+ * stripe, gmail, zadera, supabaseAdmin's service-role half) is only ever
+ * read server-side, where process.env is the real runtime object and
+ * dynamic access works fine — so `has()` remains correct and safe for those.
  */
 
 function has(...keys: string[]): boolean {
@@ -25,10 +40,18 @@ function has(...keys: string[]): boolean {
   })
 }
 
+// Static literal reads — required so Next.js can actually inline these
+// into the client bundle. Do not refactor this into has(), and do not
+// destructure process.env — both break inlining the same way.
+const supabaseUrlSet  = typeof process.env.NEXT_PUBLIC_SUPABASE_URL === 'string'
+  && process.env.NEXT_PUBLIC_SUPABASE_URL.trim().length > 0
+const supabaseAnonSet = typeof process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY === 'string'
+  && process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY.trim().length > 0
+
 export const config = {
   // ── Skeleton ────────────────────────────────────────────────────────────
-  supabase:      has('NEXT_PUBLIC_SUPABASE_URL', 'NEXT_PUBLIC_SUPABASE_ANON_KEY'),
-  supabaseAdmin: has('NEXT_PUBLIC_SUPABASE_URL', 'SUPABASE_SERVICE_ROLE_KEY'),
+  supabase:      supabaseUrlSet && supabaseAnonSet,
+  supabaseAdmin: supabaseUrlSet && has('SUPABASE_SERVICE_ROLE_KEY'),
 
   // ── Muscle ──────────────────────────────────────────────────────────────
   groq:          has('GROQ_API_KEY'),
