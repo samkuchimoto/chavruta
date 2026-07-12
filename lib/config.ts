@@ -9,7 +9,7 @@
  *   If it's missing, fail loud and early — a silent half-working app is
  *   worse than a clear error pointing at the missing env var.
  *
- *   Muscle = Groq, Nomic, Stripe, Gmail, Zadera. The core mechanism
+ *   Muscle = Groq, Nomic, Stripe, Resend, Zadera. The core mechanism
  *   (describe → match → session → feedback) does not depend on any of
  *   these. Missing muscle degrades the experience — coarser matching,
  *   no emails, no paywall — it never crashes a route.
@@ -28,7 +28,7 @@
  * `supabase` is the one flag read from a Client Component
  * (createBrowserSupabaseClient, called from the signup/login pages), so it
  * must use static literal reads instead. Everything else here (groq, nomic,
- * stripe, gmail, zadera, supabaseAdmin's service-role half) is only ever
+ * stripe, resend, zadera, supabaseAdmin's service-role half) is only ever
  * read server-side, where process.env is the real runtime object and
  * dynamic access works fine — so `has()` remains correct and safe for those.
  */
@@ -59,7 +59,7 @@ export const config = {
   zadera:        has('ZADERA_API_KEY', 'ZADERA_API_URL'),
   stripe:        has('STRIPE_SECRET_KEY', 'STRIPE_PRICE_ID'),
   stripeWebhook: has('STRIPE_WEBHOOK_SECRET'),
-  gmail:         has('GMAIL_CLIENT_ID', 'GMAIL_CLIENT_SECRET', 'GMAIL_REFRESH_TOKEN', 'GMAIL_FROM_ADDRESS'),
+  resend:        has('RESEND_API_KEY', 'RESEND_FROM_ADDRESS'),
 } as const
 
 export type Config = typeof config
@@ -80,7 +80,7 @@ export function logConfigOnce(): void {
     ['nomic', config.nomic],
     ['zadera', config.zadera],
     ['stripe', config.stripe],
-    ['gmail', config.gmail],
+    ['resend', config.resend],
   ] as const
 
   const missing = muscle.filter(([, ok]) => !ok).map(([name]) => name)

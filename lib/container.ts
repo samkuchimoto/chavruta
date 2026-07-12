@@ -29,7 +29,7 @@ import type { PaymentPort }  from '@/lib/ports/payment'
 import { KeywordMatchingAdapter } from '@/lib/adapters/matching/keyword.adapter'
 import { GroqMatchingAdapter }    from '@/lib/adapters/matching/groq.adapter'
 import { NullEmailAdapter }       from '@/lib/adapters/email/null.adapter'
-import { GmailEmailAdapter }      from '@/lib/adapters/email/gmail.adapter'
+import { ResendEmailAdapter }     from '@/lib/adapters/email/resend.adapter'
 import { NullPaymentAdapter }     from '@/lib/adapters/payment/null.adapter'
 import { StripePaymentAdapter }   from '@/lib/adapters/payment/stripe.adapter'
 
@@ -42,9 +42,9 @@ const matching: MatchingPort = config.groq
   ? new GroqMatchingAdapter()
   : new KeywordMatchingAdapter()
 
-// Email: Gmail if configured, null (console.log) otherwise
-const email: EmailPort = config.gmail
-  ? new GmailEmailAdapter()
+// Email: Resend if configured, null (console.log) otherwise
+const email: EmailPort = config.resend
+  ? new ResendEmailAdapter()
   : new NullEmailAdapter()
 
 // Payment: Stripe if configured, null (graceful no-op) otherwise
